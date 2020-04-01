@@ -1,13 +1,15 @@
 ## paths+packages.R
 
-
 # load packages
 library(tidyverse)
 library(reshape2)
 library(sf)
 library(lubridate)
 library(dataRetrieval)
-library(cowplot)
+library(patchwork)
+
+## path to onedrive directory for project
+path_onedrive <- file.path("C:/Users", "samzipper", "OneDrive - The University of Kansas", "Research", "StreamflowDepletion", "PowellCenter")
 
 ## color palettes
 # categorical color palette from https://sashat.me/2017/01/11/list-of-20-simple-distinct-colors/
