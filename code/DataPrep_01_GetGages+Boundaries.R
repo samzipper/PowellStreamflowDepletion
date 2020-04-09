@@ -63,6 +63,9 @@ sf_basins_nldi_merge <-
   sf::st_transform(crs = sf::st_crs(sf_basins_g2_merge))
 
 ## for gages missing: some should have a 0 added at the beginning and will be in gages-ii
+sf_gages$missing_basin <- !(sf_gages$GAGE_ID %in% 
+                              c(sf_basins_g2_merge$GAGE_ID, sf_basins_nhd_merge$GAGE_ID, sf_basins_nldi_merge$GAGE_ID))
+sum(sf_gages$missing_basin)
 sf_gages$GAGE_ID[sf_gages$missing_basin] <- paste0("0", sf_gages$GAGE_ID[sf_gages$missing_basin])
 
 sf_basins_g2_more <- 
@@ -71,14 +74,15 @@ sf_basins_g2_more <-
   dplyr::mutate(source = "GAGES-II") %>% 
   dplyr::select(GAGE_ID, source, geom)
 
-# any gages still missing basins?
-sf_gages$missing_basin <- !(sf_gages$GAGE_ID %in% sf_basins$GAGE_ID)
-sum(sf_gages$missing_basin)
-gages_missing <- sf_gages$GAGE_ID[sf_gages$missing_basin]
+sf_gages$GAGESII[sf_gages$GAGE_ID %in% sf_basins_g2_more$GAGE_ID] <- T
 
 # combine
 sf_basins <-
   rbind(sf_basins_g2_merge, sf_basins_g2_more, sf_basins_nhd_merge, sf_basins_nldi_merge)
+
+# any gages still missing basins?
+sf_gages$missing_basin <- !(sf_gages$GAGE_ID %in% sf_basins$GAGE_ID)
+gages_missing <- sf_gages$GAGE_ID[sf_gages$missing_basin]
 
 # test
 ggplot(sf_basins[sample(length(sf_basins$GAGE_ID), 200), ]) + geom_sf(aes(color = source))
