@@ -36,9 +36,9 @@ for (i in 1:length(sf_gages$GAGE_ID)){
     g_monthly <-
       g_df %>% 
       dplyr::group_by(Year, Month) %>% 
-      dplyr::summarize(Q_cms_mean = mean(Streamflow),
-                       B_cms_1par = mean(One_Par),
-                       B_cms_2par = mean(Eckhardt)) %>% 
+      dplyr::summarize(Q_cms_mean = mean(Streamflow)*cfs.to.cms,
+                       B_cms_1par = mean(One_Par)*cfs.to.cms,
+                       B_cms_2par = mean(Eckhardt)*cfs.to.cms) %>% 
       dplyr::ungroup()
     
     if (min(g_monthly$Year) < min(df_year_mo$Year)) stop(paste0("first year too early, ", min(g_monthly$Year)))
@@ -74,21 +74,10 @@ for (i in 1:length(sf_gages$GAGE_ID)){
   
 }
 
+row1 <- as.numeric(df_Q[1, 3:3863])
+sum(is.finite(row1))
 
-
-
-# gages with missing data
-missing_gages <- 
-  sf_gages$GAGE_ID[!sf_gages$HasData]
-
-all_data <- list.files(file.path(path_onedrive, "data", "USGS_Gages+Basins+Streamflow", 
-                                 "FromJessi", "Daily_Discharge_Baseflow_Data"))
-
-gages_data <- as.numeric(stringr::str_sub(all_data, start = 17, end = -5))
-
-sum(as.numeric(missing_gages) %in% gages_data)
-sum(as.numeric(missing_gages) %in% as.numeric(sf_gages$GAGE_ID))
-sum(as.numeric(gages_data) %in% as.numeric(sf_gages$GAGE_ID))
-
-sum(duplicated(gages_data))
-length(gages_data[!(gages_data %in% as.numeric(sf_gages$GAGE_ID))])
+## save
+readr::write_csv(df_Q, file.path(path_onedrive, "data", "USGS_Gages+Basins+Streamflow", "Streamflow_Monthly_AllGages.csv"))
+readr::write_csv(df_B_1par, file.path(path_onedrive, "data", "USGS_Gages+Basins+Streamflow", "Baseflow-1par_Monthly_AllGages.csv"))
+readr::write_csv(df_B_2par, file.path(path_onedrive, "data", "USGS_Gages+Basins+Streamflow", "Baseflow-2par_Monthly_AllGages.csv"))

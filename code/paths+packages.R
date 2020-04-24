@@ -11,6 +11,9 @@ library(patchwork)
 ## path to onedrive directory for project
 path_onedrive <- file.path("C:/Users", "samzipper", "OneDrive - The University of Kansas", "Research", "StreamflowDepletion", "PowellCenter")
 
+## conversions
+cfs.to.cms <- (0.3048)^3
+
 ## color palettes
 # categorical color palette from https://sashat.me/2017/01/11/list-of-20-simple-distinct-colors/
 col.cat.grn <- "#3cb44b"   # green
